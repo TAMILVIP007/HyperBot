@@ -200,7 +200,7 @@ def save(bot: Bot, update: Update):
 @run_async
 @user_admin
 def clear(bot: Bot, update: Update, args: List[str]):
-    if len(args) >= 1:
+    if args:
         notename = args[0]
 
         chat_id = update.effective_chat.id
@@ -226,19 +226,16 @@ def list_notes(bot: Bot, update: Update):
     if msg == "*Notes in chat:*\n":
         update.effective_message.reply_text("No notes in this chat!")
 
-    elif len(msg) != 0:
+    elif msg != '':
         update.effective_message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
 
 
 def __import_data__(chat_id, data):
     failures = []
     for notename, notedata in data.get("extra", {}).items():
-        match = FILE_MATCHER.match(notedata)
-
-        if match:
+        if match := FILE_MATCHER.match(notedata):
             failures.append(notename)
-            notedata = notedata[match.end() :].strip()
-            if notedata:
+            if notedata := notedata[match.end() :].strip():
                 sql.add_note_to_db(chat_id, notename[1:], notedata, sql.Types.TEXT)
         else:
             sql.add_note_to_db(chat_id, notename[1:], notedata, sql.Types.TEXT)

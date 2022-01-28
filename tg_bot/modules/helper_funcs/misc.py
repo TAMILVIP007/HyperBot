@@ -31,9 +31,8 @@ def split_message(msg: str) -> List[str]:
         else:
             result.append(small_msg)
             small_msg = line
-    else:
-        # Else statement at the end of the for loop, so append the leftover string.
-        result.append(small_msg)
+    # Else statement at the end of the for loop, so append the leftover string.
+    result.append(small_msg)
 
     return result
 
@@ -117,14 +116,12 @@ def build_keyboard(buttons):
 
 
 def revert_buttons(buttons):
-    res = ""
-    for btn in buttons:
-        if btn.same_line:
-            res += "\n[{}](buttonurl://{}:same)".format(btn.name, btn.url)
-        else:
-            res += "\n[{}](buttonurl://{})".format(btn.name, btn.url)
-
-    return res
+    return "".join(
+        "\n[{}](buttonurl://{}:same)".format(btn.name, btn.url)
+        if btn.same_line
+        else "\n[{}](buttonurl://{})".format(btn.name, btn.url)
+        for btn in buttons
+    )
 
 
 def is_module_loaded(name):

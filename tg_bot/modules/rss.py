@@ -116,11 +116,7 @@ def add_url(bot, update, args):
 
             tg_chat_id = str(update.effective_chat.id)
 
-            # gather the row which contains exactly that telegram group ID and link for later comparison
-            row = sql.check_url_availability(tg_chat_id, tg_feed_link)
-
-            # check if there's an entry already added to DB by the same user in the same group with the same link
-            if row:
+            if row := sql.check_url_availability(tg_chat_id, tg_feed_link):
                 update.effective_message.reply_text("This URL has already been added")
             else:
                 sql.add_url(tg_chat_id, tg_feed_link, tg_old_entry_link)
@@ -142,9 +138,9 @@ def remove_url(bot, update, args):
         if link_processed.bozo == 0:
             tg_chat_id = str(update.effective_chat.id)
 
-            user_data = sql.check_url_availability(tg_chat_id, tg_feed_link)
-
-            if user_data:
+            if user_data := sql.check_url_availability(
+                tg_chat_id, tg_feed_link
+            ):
                 sql.remove_url(tg_chat_id, tg_feed_link)
 
                 update.effective_message.reply_text("Removed URL from subscription")

@@ -18,7 +18,7 @@ def report_setting(bot: Bot, update: Update, args: List[str]):
     msg = update.effective_message  # type: Optional[Message]
 
     if chat.type == chat.PRIVATE:
-        if len(args) >= 1:
+        if args:
             if args[0] in ("yes", "on"):
                 sql.set_user_setting(chat.id, True)
                 msg.reply_text(
@@ -36,27 +36,26 @@ def report_setting(bot: Bot, update: Update, args: List[str]):
                 parse_mode=ParseMode.MARKDOWN,
             )
 
-    else:
-        if len(args) >= 1:
-            if args[0] in ("yes", "on"):
-                sql.set_chat_setting(chat.id, True)
-                msg.reply_text(
-                    "Turned on reporting! Admins who have turned on reports will be notified when /report "
-                    "or @admin are called."
-                )
-
-            elif args[0] in ("no", "off"):
-                sql.set_chat_setting(chat.id, False)
-                msg.reply_text(
-                    "Turned off reporting! No admins will be notified on /report or @admin."
-                )
-        else:
+    elif args:
+        if args[0] in ("yes", "on"):
+            sql.set_chat_setting(chat.id, True)
             msg.reply_text(
-                "This chat's current setting is: `{}`".format(
-                    sql.chat_should_report(chat.id)
-                ),
-                parse_mode=ParseMode.MARKDOWN,
+                "Turned on reporting! Admins who have turned on reports will be notified when /report "
+                "or @admin are called."
             )
+
+        elif args[0] in ("no", "off"):
+            sql.set_chat_setting(chat.id, False)
+            msg.reply_text(
+                "Turned off reporting! No admins will be notified on /report or @admin."
+            )
+    else:
+        msg.reply_text(
+            "This chat's current setting is: `{}`".format(
+                sql.chat_should_report(chat.id)
+            ),
+            parse_mode=ParseMode.MARKDOWN,
+        )
 
 
 @run_async
@@ -72,13 +71,12 @@ def report(bot: Bot, update: Update) -> str:
             return ""
         admin_list = chat.get_administrators()
 
-        ping_list = ""
+        ping_list = "".join(
+            f"​[​](tg://user?id={admin.user.id})"
+            for admin in admin_list
+            if not admin.user.is_bot
+        )
 
-        for admin in admin_list:
-            if admin.user.is_bot:  # can't message bots
-                continue
-
-            ping_list += f"​[​](tg://user?id={admin.user.id})"
 
         message.reply_text(
             f"Successfully reported [{reported_user.first_name}](tg://user?id={reported_user.id}) to admins! "

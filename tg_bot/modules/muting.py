@@ -39,9 +39,7 @@ def mute(bot: Bot, update: Update, args: List[str]) -> str:
         message.reply_text("I'm not muting myself!")
         return ""
 
-    member = chat.get_member(int(user_id))
-
-    if member:
+    if member := chat.get_member(int(user_id)):
         if is_user_admin(chat, user_id, member=member):
             message.reply_text("Afraid I can't stop an admin from talking!")
 
@@ -82,9 +80,7 @@ def unmute(bot: Bot, update: Update, args: List[str]) -> str:
         )
         return ""
 
-    member = chat.get_member(int(user_id))
-
-    if member:
+    if member := chat.get_member(int(user_id)):
         user = update.effective_user  # type: Optional[User]
         if is_user_admin(chat, user_id, member=member):
             message.reply_text("This is an admin, what do you expect me to do?")

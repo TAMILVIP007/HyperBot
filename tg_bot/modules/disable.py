@@ -69,7 +69,7 @@ if is_module_loaded(FILENAME):
     @run_async
     @user_admin
     def disable(bot: Bot, update: Update, args: List[str]):
-        if len(args) >= 1:
+        if args:
             disable_cmd = args[0]
             if disable_cmd.startswith(CMD_STARTERS):
                 disable_cmd = disable_cmd[1:]
@@ -90,7 +90,7 @@ if is_module_loaded(FILENAME):
     @run_async
     @user_admin
     def enable(bot: Bot, update: Update, args: List[str]):
-        if len(args) >= 1:
+        if args:
             enable_cmd = args[0]
             if enable_cmd.startswith(CMD_STARTERS):
                 enable_cmd = enable_cmd[1:]
@@ -111,9 +111,11 @@ if is_module_loaded(FILENAME):
     @user_admin
     def list_cmds(bot: Bot, update: Update):
         if DISABLE_CMDS + DISABLE_OTHER:
-            result = ""
-            for cmd in set(DISABLE_CMDS + DISABLE_OTHER):
-                result += " - `{}`\n".format(escape_markdown(cmd))
+            result = "".join(
+                " - `{}`\n".format(escape_markdown(cmd))
+                for cmd in set(DISABLE_CMDS + DISABLE_OTHER)
+            )
+
             update.effective_message.reply_text(
                 "The following commands are toggleable:\n{}".format(result),
                 parse_mode=ParseMode.MARKDOWN,
@@ -127,9 +129,7 @@ if is_module_loaded(FILENAME):
         if not disabled:
             return "No commands are disabled!"
 
-        result = ""
-        for cmd in disabled:
-            result += " - `{}`\n".format(escape_markdown(cmd))
+        result = "".join(" - `{}`\n".format(escape_markdown(cmd)) for cmd in disabled)
         return "The following commands are currently restricted:\n{}".format(result)
 
     @run_async

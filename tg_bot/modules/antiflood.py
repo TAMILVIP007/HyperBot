@@ -72,7 +72,7 @@ def check_flood(bot: Bot, update: Update) -> str:
 @can_restrict
 @loggable
 def set_flood(bot: Bot, update: Update, args: List[str]) -> str:
-    if len(args) >= 1:
+    if args:
         val = args[0].lower()
         chat = update.effective_chat  # type: Optional[Chat]
         user = update.effective_user  # type: Optional[User]

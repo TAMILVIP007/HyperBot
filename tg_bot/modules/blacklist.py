@@ -91,8 +91,7 @@ def unblacklist(bot: Bot, update: Update):
 
         successful = 0
         for trigger in to_unblacklist:
-            success = sql.rm_from_blacklist(chat.id, trigger.lower())
-            if success:
+            if success := sql.rm_from_blacklist(chat.id, trigger.lower()):
                 successful += 1
 
         if len(to_unblacklist) == 1:

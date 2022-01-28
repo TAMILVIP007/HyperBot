@@ -148,8 +148,8 @@ def pin(bot: Bot, update: Update, args: List[str]) -> str:
     prev_message = update.effective_message.reply_to_message
 
     is_silent = True
-    if len(args) >= 1:
-        is_silent = not args[0].lower() in ["notify", "loud", "violent"]
+    if args:
+        is_silent = args[0].lower() not in ["notify", "loud", "violent"]
 
     if prev_message and is_group:
         try:
@@ -224,10 +224,6 @@ def adminlist(bot: Bot, update: Update):
     for admin in administrators:
         user = admin.user
         name = "[{}](tg://user?id={})".format(
-            user.first_name + (user.last_name or ""), user.id
-        )
-        if user.username:
-            name = "[{}](tg://user?id={})".format(
                 user.first_name + (user.last_name or ""), user.id
             )
         text += "\n - {}".format(name)
